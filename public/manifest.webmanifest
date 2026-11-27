@@ -1,0 +1,15 @@
+{
+  "name": "Fishbone Builder",
+  "short_name": "Fishbone",
+  "description": "Build Ishikawa (cause-and-effect) diagrams",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f1ea",
+  "theme_color": "#0f4c5c",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

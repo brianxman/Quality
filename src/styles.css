@@ -1,0 +1,427 @@
+/*
+ * styles.css - all visual styling.
+ *
+ * "CSS variables" (--name) at the top hold the colour scheme, so changing the
+ * look of the whole app means editing a few lines here.
+ */
+:root {
+  --paper: #f4f1ea;
+  --card: #ffffff;
+  --ink: #1d2b33;
+  --muted: #5d6b73;
+  --line: #d9d3c5;
+  --teal: #0f4c5c;
+  --danger: #b3261e;
+  --radius: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+  color: var(--ink);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--paper);
+  /* Stop iPad from inflating text and from "rubber-banding" the whole page. */
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
+}
+
+/* ---- Page frame ---------------------------------------------------------- */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /* Keep content clear of the iPad's rounded corners / home indicator. */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 18px;
+  background: var(--teal);
+  color: #fff;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: 0.2px;
+}
+
+.logo {
+  margin-right: 8px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* ---- Buttons (sized for fingers: at least 44px tall, Apple's guideline) ---- */
+.btn {
+  min-height: 44px;
+  padding: 0 16px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  touch-action: manipulation; /* removes the iOS double-tap delay */
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-danger {
+  color: var(--danger);
+}
+
+.btn-danger-solid {
+  color: #fff;
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+.btn-small {
+  min-height: 40px;
+  font-size: 15px;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+}
+
+.icon-btn {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* ---- Workspace: diagram + editor panel ------------------------------------ */
+.workspace {
+  flex: 1;
+  min-height: 0; /* lets children scroll instead of stretching the page */
+  display: flex;
+  flex-direction: column; /* portrait iPad: stacked */
+  gap: 14px;
+  padding: 14px 18px 18px;
+}
+
+/* Landscape / wide screens: diagram on the left, editor on the right. */
+@media (min-width: 980px) {
+  .workspace.with-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+  }
+}
+
+.diagram-card {
+  flex: none;
+  min-width: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* Side-by-side mode only: don't stretch the card to the (taller) editor's height.
+   (Scoped to .with-panel - applying this when the editor is hidden shrank the card.) */
+@media (min-width: 980px) {
+  .workspace.with-panel .diagram-card {
+    align-self: start;
+  }
+}
+
+/* Narrow screens: keep the diagram a readable size and let it scroll sideways. */
+.diagram-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.fishbone {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: inherit;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The drawing scales to fit its container. Only on very narrow screens (phones)
+   do we stop shrinking it and let it scroll sideways instead.
+   Tip: "Hide editor" gives the diagram the full screen width. */
+.fishbone {
+  min-width: 700px;
+}
+
+/* ---- SVG parts ------------------------------------------------------------ */
+.spine {
+  stroke: var(--ink);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+
+.branch-line {
+  stroke: var(--branch-color);
+  stroke-width: 4;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.branch.selected .branch-line {
+  stroke-width: 7;
+}
+
+.branch-hit {
+  stroke: transparent;
+  stroke-width: 28;
+  cursor: pointer;
+}
+
+.label {
+  cursor: pointer;
+}
+
+.label-box {
+  fill: var(--branch-color);
+}
+
+.branch.selected .label-box {
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+
+.label-text {
+  fill: #fff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.cause {
+  cursor: pointer;
+}
+
+.cause-hit {
+  fill: transparent;
+}
+
+.cause-line {
+  stroke: var(--branch-color);
+  stroke-width: 2.5;
+  pointer-events: none;
+}
+
+.cause-text {
+  fill: var(--ink);
+  font-size: 16px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.head {
+  cursor: pointer;
+}
+
+.head-box {
+  fill: #fff;
+  stroke: var(--ink);
+  stroke-width: 4;
+}
+
+.head-caption {
+  fill: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.head-text {
+  fill: var(--ink);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.head-placeholder {
+  fill: var(--muted);
+  font-size: 16px;
+  font-style: italic;
+}
+
+/* ---- Editor panel --------------------------------------------------------- */
+.panel {
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.field-label {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+h2.field-label {
+  margin-top: 18px;
+}
+
+.hint {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* font-size 16px+ on inputs stops iPad Safari from zooming the page on focus. */
+input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 17px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+input:focus {
+  outline: 3px solid color-mix(in srgb, var(--teal) 35%, transparent);
+  border-color: var(--teal);
+}
+
+.card {
+  margin-bottom: 10px;
+  border: 1px solid var(--line);
+  border-left: 8px solid var(--branch-color);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.card.open {
+  box-shadow: 0 3px 12px rgba(29, 43, 51, 0.12);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+}
+
+.card-head .title-input {
+  font-weight: 700;
+  border-color: transparent;
+  background: transparent;
+}
+
+.card.open .title-input {
+  border-color: var(--line);
+  background: #fff;
+}
+
+.count {
+  flex: none;
+  min-width: 28px;
+  padding: 3px 8px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  background: var(--branch-color);
+  border-radius: 999px;
+}
+
+.swatch {
+  display: none;
+}
+
+.card-body {
+  padding: 4px 10px 12px;
+}
+
+.cause-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.card-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* ---- Confirm dialog ------------------------------------------------------- */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 30, 38, 0.55);
+}
+
+.dialog {
+  width: min(460px, 100%);
+  padding: 22px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.dialog h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.dialog p {
+  margin: 0 0 18px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
